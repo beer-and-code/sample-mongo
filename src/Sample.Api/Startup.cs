@@ -26,6 +26,8 @@ namespace Sample.Api
             _configuration = configuration;
         }
 
+        // TODO Add MongoDb settings in appsettings
+        // TODO Add ExceptionMiddleware
         public void ConfigureServices(IServiceCollection services)
         {
 

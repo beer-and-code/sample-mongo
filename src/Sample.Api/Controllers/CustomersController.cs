@@ -6,6 +6,7 @@ namespace Sample.Api.Controllers
     [Route("api/v1/customers")]
     public class CustomersController : ControllerBase
     {
+        // TODO Add routes
         public CustomersController(ILogger<CustomersController> logger)
         {
             Logger = logger;
