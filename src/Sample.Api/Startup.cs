@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,13 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
-using Sample.Api.InfraMongo;
+using Sample.Api.Infrastructure;
+using Sample.Api.Shared;
 using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
+using System.IO;
 
 namespace Sample.Api
 {
@@ -27,30 +25,11 @@ namespace Sample.Api
         }
 
         // TODO Add MongoDb settings in appsettings
-        // TODO Add ExceptionMiddleware
         public void ConfigureServices(IServiceCollection services)
         {
 
-            #region Api Configurations
 
-            services
-                .AddCors(options => options.AddPolicy("CorsPolicy", policy =>
-                {
-                    policy
-                        .AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                }));
-
-            services
-                .AddControllers()
-                .AddJsonOptions(op =>
-                {
-                    op.JsonSerializerOptions.IgnoreNullValues = true;
-                    op.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
-                });
-
-            #endregion
+            services.AddControllers();
 
 
             #region Swagger Configurations
@@ -69,12 +48,6 @@ namespace Sample.Api
                 c.ExampleFilters();
                 c.MapType<Guid>(() => new OpenApiSchema { Type = "string", Format = "uuid" });
                 c.UseInlineDefinitionsForEnums();
-                c.AddSecurityDefinition("api_key", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.ApiKey,
-                    In = ParameterLocation.Header,
-                    Name = "x-api-key"
-                });
                 c.IncludeXmlComments($"{Path.GetDirectoryName(assemblyPath)}{Path.DirectorySeparatorChar}{Path.GetFileNameWithoutExtension(assemblyPath)}.xml");
             });
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
@@ -96,16 +69,13 @@ namespace Sample.Api
             });
 
             services.AddSingleton<IMongoClient>(new MongoClient(mongoClientSettings));
-
-            services.AddTransient(typeof(IMongoBaseRepository<>), typeof(MongoBaseRepository<,>));
+            services.AddScoped(typeof(IMongoBaseRepository<>), typeof(MongoBaseRepository<>));
 
             #endregion
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("CorsPolicy");
-
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseSwagger();
@@ -113,14 +83,15 @@ namespace Sample.Api
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sample Api MongoDB v1");
-                c.EnableFilter();
-                c.DocExpansion(DocExpansion.List);
                 c.RoutePrefix = string.Empty;
+
             });
 
             app.UseRouting();
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

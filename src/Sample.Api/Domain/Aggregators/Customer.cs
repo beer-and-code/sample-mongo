@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Sample.Api.Domain.Core;
+using System;
 using System.Collections.Generic;
 
-namespace Sample.Api.Models.Aggregators
+namespace Sample.Api.Domain.Aggregators
 {
     public sealed class Customer : AggregateRoot
     {
@@ -20,7 +21,7 @@ namespace Sample.Api.Models.Aggregators
             Id = id;
         }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
         public List<Guid> Accounts { get; set; }
 

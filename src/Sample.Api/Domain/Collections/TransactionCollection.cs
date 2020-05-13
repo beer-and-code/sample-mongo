@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Sample.Api.Models.Entities;
-using Sample.Api.Models.ValueObjects;
+﻿using Sample.Api.Domain.Entities;
+using Sample.Api.Domain.ValueObjects;
+using System.Collections.Generic;
 
-namespace Sample.Api.Models.Collections
+namespace Sample.Api.Domain.Collections
 {
     public class TransactionCollection : List<Transaction>
     {
@@ -21,12 +21,12 @@ namespace Sample.Api.Models.Collections
 
             ForEach(item =>
             {
-                switch (item)
+                switch (item.Description)
                 {
-                    case Debit _:
+                    case nameof(Debit):
                         totalAmount -= item.Amount;
                         break;
-                    case Credit _:
+                    case nameof(Credit):
                         totalAmount += item.Amount;
                         break;
                 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sample.Api.Models.Entities
+namespace Sample.Api.Domain.Core
 {
     public abstract class Entity : IEntity
     {

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Sample.Api.Models.ValueObjects
+namespace Sample.Api.Domain.ValueObjects
 {
     public class Amount
     {

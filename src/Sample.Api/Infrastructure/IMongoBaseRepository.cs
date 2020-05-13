@@ -1,11 +1,11 @@
-﻿using System;
+﻿using MongoDB.Driver;
+using Sample.Api.Domain.Core;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using MongoDB.Driver;
-using Sample.Api.Models.Entities;
 
-namespace Sample.Api.InfraMongo
+namespace Sample.Api.Infrastructure
 {
     public interface IMongoBaseRepository<T> where T : IEntity
     {

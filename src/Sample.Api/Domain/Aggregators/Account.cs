@@ -1,9 +1,10 @@
-﻿using System;
-using Sample.Api.Models.Collections;
-using Sample.Api.Models.Entities;
+﻿using Sample.Api.Domain.Collections;
+using Sample.Api.Domain.Core;
+using Sample.Api.Domain.Entities;
 using Sample.Api.Shared;
+using System;
 
-namespace Sample.Api.Models.Aggregators
+namespace Sample.Api.Domain.Aggregators
 {
     public sealed class Account : AggregateRoot
     {
@@ -15,7 +16,6 @@ namespace Sample.Api.Models.Aggregators
         public Guid CustomerId { get; set; }
 
         public TransactionCollection Transactions { get; set; }
-
 
         public void Open(Guid customerId, Credit credit)
         {
@@ -31,7 +31,7 @@ namespace Sample.Api.Models.Aggregators
         public void Withdraw(Debit debit)
         {
             if (Transactions.GetCurrentBalance() < debit.Amount)
-                throw new DomainException($"A conta {Id} não possui fundos suficientes para retirar {debit.Amount}.");
+                throw new DomainException($"The account {Id} does not have enough funds to withdraw {debit.Amount}.");
 
             Transactions.Add(debit);
         }
@@ -39,12 +39,9 @@ namespace Sample.Api.Models.Aggregators
         public void CanBeClosed()
         {
             if (Transactions.GetCurrentBalance() > 0)
-                throw new DomainException($"A conta {Id} não pode ser fechada porque possui fundos.");
+                throw new DomainException($"The account {Id} can not be closed because it has funds.");
         }
 
-        public decimal GetCurrentBalance()
-        {
-            return Transactions.GetCurrentBalance();
-        }
+        public decimal CurrentBalance => Transactions.GetCurrentBalance();
     }
 }
