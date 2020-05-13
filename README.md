@@ -1,5 +1,5 @@
 # Introdução 
-Sample Api é um projeto voltado para demonstração do uso do mongodb 
+Sample é um projeto referência estudo de mongodb
 
 ## Ferramentas:
 
